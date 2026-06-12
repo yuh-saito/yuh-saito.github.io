@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>タイピングトレーニング</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <main class="screen-container">
+        <section
+          id="title-screen"
+          class="screen is-active"
+          data-screen="title"
+          aria-labelledby="title-screen-heading"
+        >
+          <div class="panel hero-panel">
+            <h2 id="title-screen-heading" class="panel__title hero-panel__title">
+              タイピングトレーニング
+            </h2>
+            <div class="hero-panel__actions">
+              <button type="button" class="button button--primary" data-action="open-mode-select">
+                スタート
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="mode-select-screen"
+          class="screen"
+          data-screen="mode-select"
+          aria-labelledby="mode-select-heading"
+        >
+          <div class="panel">
+            <h2 id="mode-select-heading" class="panel__title">モード選択</h2>
+            <div class="mode-grid">
+              <article class="mode-card">
+                <button
+                  type="button"
+                  class="button button--primary"
+                  data-action="start-game"
+                  data-mode="time-attack"
+                >
+                  タイムアタック
+                </button>
+              </article>
+              <article class="mode-card">
+                <button
+                  type="button"
+                  class="button button--secondary"
+                  data-action="start-game"
+                  data-mode="mission"
+                >
+                  ミッション
+                </button>
+              </article>
+            </div>
+            <div class="panel__actions panel__actions--end">
+              <button type="button" class="button button--ghost" data-action="back-to-title">
+                タイトルへ戻る
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="ready-screen"
+          class="screen"
+          data-screen="ready"
+          aria-labelledby="ready-screen-heading"
+        >
+          <div class="panel ready-panel">
+            <h2 id="ready-screen-heading" class="panel__title ready-mode-name">タイムアタック</h2>
+            <p id="ready-mode-description" class="ready-sub-description">30秒でどこまで打てるか挑戦します。</p>
+            <p class="ready-check-description">表示したい補助だけをチェックしてください。</p>
+            <div class="ready-toggles">
+              <label class="toggle">
+                <input type="checkbox" id="ready-keyboard-toggle" checked />
+                <span>仮想キーボード</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" id="ready-finger-guide-toggle" checked />
+                <span>指ガイド</span>
+              </label>
+            </div>
+            <div class="ready-start-action">
+              <button type="button" class="button button--primary" data-action="open-play-screen">
+                スタート
+              </button>
+            </div>
+            <div class="panel__actions panel__actions--end ready-actions">
+              <button type="button" class="button button--ghost" data-action="back-to-mode-select">
+                モード選択へ戻る
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="play-screen"
+          class="screen"
+          data-screen="play"
+          aria-labelledby="play-screen-heading"
+        >
+          <div class="panel play-panel play-panel--reference">
+            <div class="play-toolbar play-toolbar--compact">
+              <div class="play-meta play-meta--compact" aria-label="プレイ情報">
+                <div class="play-meta__mode-block">
+                  <p class="play-meta__mode-label">プレイモード</p>
+                  <p id="status-mode" class="play-meta__mode-value">未選択</p>
+                </div>
+                <div class="play-meta__stats">
+                  <div class="play-meta__item play-meta__item--score">
+                    <span class="play-meta__label">スコア</span>
+                    <span id="status-score" class="play-meta__value">0</span>
+                  </div>
+                  <div class="play-meta__item">
+                    <span class="play-meta__label">正解タイプ数</span>
+                    <span id="status-correct" class="play-meta__value">0</span>
+                  </div>
+                  <div class="play-meta__item">
+                    <span class="play-meta__label">ミスタイプ数</span>
+                    <span id="status-miss" class="play-meta__value">0</span>
+                  </div>
+                  <div class="play-meta__item play-meta__item--wide">
+                    <span id="status-remaining-label" class="play-meta__label">残り時間</span>
+                    <span id="status-remaining-value" class="play-meta__value">30</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="play-countdown-display" class="play-countdown-display is-hidden" aria-live="assertive">3</div>
+
+            <div id="play-question-card" class="question-card question-card--reference question-card--compact">
+              <p id="question-text" class="question-card__text question-card__text--reference">教育実習の先生</p>
+              <p id="question-kana" class="question-card__kana question-card__kana--reference">きょういくじっしゅうのせんせい</p>
+              <div class="romaji-line romaji-line--reference" aria-live="polite">
+                <span id="typed-romaji" class="romaji-line__typed"></span>
+                <span id="remaining-romaji" class="romaji-line__remaining">KYOUIKUJISSYUUNOSENNSEI</span>
+              </div>
+              <div class="progress progress--reference" aria-label="ローマ字の進捗">
+                <div id="romaji-progress-bar" class="progress__bar progress__bar--reference"></div>
+              </div>
+            </div>
+
+            <div id="virtual-keyboard" class="keyboard-panel keyboard-panel--reference">
+              <div class="keyboard-row keyboard-row--compact">
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap" data-key="1">1</span>
+                <span class="keycap" data-key="2">2</span>
+                <span class="keycap" data-key="3">3</span>
+                <span class="keycap" data-key="4">4</span>
+                <span class="keycap" data-key="5">5</span>
+                <span class="keycap" data-key="6">6</span>
+                <span class="keycap" data-key="7">7</span>
+                <span class="keycap" data-key="8">8</span>
+                <span class="keycap" data-key="9">9</span>
+                <span class="keycap" data-key="0">0</span>
+                <span class="keycap" data-key="-">-</span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+              </div>
+              <div class="keyboard-row keyboard-row--compact">
+                <span class="keycap keycap--blank keycap--tab"></span>
+                <span class="keycap" data-key="q">Q</span>
+                <span class="keycap" data-key="w">W</span>
+                <span class="keycap" data-key="e">E</span>
+                <span class="keycap" data-key="r">R</span>
+                <span class="keycap" data-key="t">T</span>
+                <span class="keycap" data-key="y">Y</span>
+                <span class="keycap" data-key="u">U</span>
+                <span class="keycap" data-key="i">I</span>
+                <span class="keycap" data-key="o">O</span>
+                <span class="keycap" data-key="p">P</span>
+                <span class="keycap">@</span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+              </div>
+              <div class="keyboard-row keyboard-row--compact">
+                <span class="keycap keycap--blank keycap--caps"></span>
+                <span class="keycap" data-key="a">A</span>
+                <span class="keycap" data-key="s">S</span>
+                <span class="keycap" data-key="d">D</span>
+                <span class="keycap" data-key="f">F</span>
+                <span class="keycap" data-key="g">G</span>
+                <span class="keycap" data-key="h">H</span>
+                <span class="keycap" data-key="j">J</span>
+                <span class="keycap" data-key="k">K</span>
+                <span class="keycap" data-key="l">L</span>
+                <span class="keycap">;</span>
+                <span class="keycap">:</span>
+                <span class="keycap keycap--blank"></span>
+              </div>
+              <div class="keyboard-row keyboard-row--compact">
+                <span class="keycap keycap--wide-label">shift</span>
+                <span class="keycap" data-key="z">Z</span>
+                <span class="keycap" data-key="x">X</span>
+                <span class="keycap" data-key="c">C</span>
+                <span class="keycap" data-key="v">V</span>
+                <span class="keycap" data-key="b">B</span>
+                <span class="keycap" data-key="n">N</span>
+                <span class="keycap" data-key="m">M</span>
+                <span class="keycap">,</span>
+                <span class="keycap">.</span>
+                <span class="keycap">/</span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--wide-label">shift</span>
+              </div>
+              <div class="keyboard-row keyboard-row--compact">
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--space" data-key="Space">space</span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+                <span class="keycap keycap--blank"></span>
+              </div>
+            </div>
+
+            <div id="finger-guide" class="finger-guide-panel finger-guide-panel--reference">
+              <div class="hand-guide">
+                <div class="hand-guide__group hand-guide__group--left">
+                  <div class="finger-shape finger-shape--left-pinky" data-finger="left-pinky"></div>
+                  <div class="finger-shape finger-shape--left-ring" data-finger="left-ring"></div>
+                  <div class="finger-shape finger-shape--left-middle" data-finger="left-middle"></div>
+                  <div class="finger-shape finger-shape--left-index" data-finger="left-index"></div>
+                  <div class="finger-shape finger-shape--left-thumb" data-finger="left-thumb"></div>
+                </div>
+                <div class="hand-guide__group hand-guide__group--right">
+                  <div class="finger-shape finger-shape--right-thumb" data-finger="right-thumb"></div>
+                  <div class="finger-shape finger-shape--right-index" data-finger="right-index"></div>
+                  <div class="finger-shape finger-shape--right-middle" data-finger="right-middle"></div>
+                  <div class="finger-shape finger-shape--right-ring" data-finger="right-ring"></div>
+                  <div class="finger-shape finger-shape--right-pinky" data-finger="right-pinky"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel__actions panel__actions--end play-panel__actions">
+              <button type="button" class="button button--ghost" data-action="back-to-mode-select">
+                モード選択へ戻る
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="result-screen"
+          class="screen"
+          data-screen="result"
+          aria-labelledby="result-screen-heading"
+        >
+          <div class="panel result-panel">
+            <h2 id="result-screen-heading" class="panel__title">結果</h2>
+            <div class="result-summary result-summary--triple" aria-label="主な結果">
+              <div class="result-summary__item result-summary__item--rank">
+                <p class="result-summary__label">ランク</p>
+                <p id="result-rank" class="result-summary__rank">B</p>
+              </div>
+              <div class="result-summary__item result-summary__item--score">
+                <p class="result-summary__label">総合スコア</p>
+                <p id="result-score" class="result-summary__score">160</p>
+              </div>
+              <div class="result-summary__item result-summary__item--today-rank">
+                <p class="result-summary__label">今日の順位</p>
+                <p id="result-today-rank" class="result-summary__score">-</p>
+              </div>
+            </div>
+
+            <p id="ranking-status-message" class="ranking-panel__status">ローカルランキングを準備中です。</p>
+
+            <div class="result-grid">
+              <div class="status-card">
+                <span class="status-card__label">正解タイプ数</span>
+                <span id="result-correct" class="status-card__value">0</span>
+              </div>
+              <div class="status-card">
+                <span class="status-card__label">ミスタイプ数</span>
+                <span id="result-miss" class="status-card__value">0</span>
+              </div>
+              <div class="status-card">
+                <span class="status-card__label">正確率</span>
+                <span id="result-accuracy" class="status-card__value">0%</span>
+              </div>
+              <div class="status-card">
+                <span class="status-card__label">WPM</span>
+                <span id="result-wpm" class="status-card__value">0</span>
+              </div>
+              <div class="status-card status-card--wide">
+                <span id="result-extra-label" class="status-card__label">完了問題数</span>
+                <span id="result-extra-value" class="status-card__value">0</span>
+              </div>
+            </div>
+
+            <div class="panel__actions result-actions" aria-label="リザルト操作">
+              <button type="button" class="button button--primary" data-action="retry-game" data-result-action>
+                もう一度遊ぶ
+              </button>
+              <button type="button" class="button button--secondary" data-action="open-ranking-screen" data-result-action>
+                ランキングを見る
+              </button>
+              <button type="button" class="button button--secondary" data-action="back-to-mode-select" data-result-action>
+                モード選択へ戻る
+              </button>
+              <button type="button" class="button button--ghost" data-action="back-to-title" data-result-action>
+                タイトルへ戻る
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="ranking-screen"
+          class="screen"
+          data-screen="ranking"
+          aria-labelledby="ranking-screen-heading"
+        >
+          <div class="panel result-panel">
+            <h2 id="ranking-screen-heading" class="panel__title">ランキング</h2>
+            <div class="ranking-summary-grid ranking-summary-grid--primary">
+              <div class="ranking-card ranking-card--primary">
+                <span class="ranking-card__label">今日の順位</span>
+                <span id="ranking-today-rank" class="ranking-card__value">-</span>
+              </div>
+              <div class="ranking-card">
+                <span class="ranking-card__label">今月の順位</span>
+                <span id="ranking-month-rank-screen" class="ranking-card__value">-</span>
+              </div>
+              <div class="ranking-card">
+                <span class="ranking-card__label">全体順位</span>
+                <span id="ranking-current-rank-screen" class="ranking-card__value">-</span>
+              </div>
+            </div>
+            <div class="ranking-sections">
+              <section class="ranking-subsection" aria-labelledby="today-ranking-heading">
+                <h4 id="today-ranking-heading" class="ranking-subsection__title">今日のトップ10</h4>
+                <div class="ranking-table-wrapper">
+                  <table class="ranking-table" aria-label="今日のトップ10">
+                    <thead>
+                      <tr>
+                        <th scope="col">順位</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">スコア</th>
+                        <th scope="col">ランク</th>
+                        <th scope="col">正確率</th>
+                        <th scope="col">WPM</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ranking-today-table-body">
+                      <tr>
+                        <td colspan="6" class="ranking-table__empty">ランキングデータはまだありません。</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+              <section class="ranking-subsection" aria-labelledby="month-ranking-heading">
+                <h4 id="month-ranking-heading" class="ranking-subsection__title">今月のトップ10</h4>
+                <div class="ranking-table-wrapper">
+                  <table class="ranking-table" aria-label="今月のトップ10">
+                    <thead>
+                      <tr>
+                        <th scope="col">順位</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">スコア</th>
+                        <th scope="col">ランク</th>
+                        <th scope="col">正確率</th>
+                        <th scope="col">WPM</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ranking-month-table-body">
+                      <tr>
+                        <td colspan="6" class="ranking-table__empty">ランキングデータはまだありません。</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+            <div class="panel__actions result-actions" aria-label="ランキング操作">
+              <button type="button" class="button button--primary" data-action="back-to-result">
+                リザルトへ戻る
+              </button>
+              <button type="button" class="button button--secondary" data-action="retry-game">
+                もう一度遊ぶ
+              </button>
+              <button type="button" class="button button--ghost" data-action="back-to-title">
+                タイトルへ戻る
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="player-name-modal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="player-name-modal-title">
+      <div class="modal__backdrop"></div>
+      <div class="modal__panel">
+        <h2 id="player-name-modal-title" class="modal__title">ランキング表示名を入力</h2>
+        <p class="modal__description">ランキングに表示する名前を設定してください。</p>
+        <label class="modal__field" for="player-name-input">
+          <span class="modal__label">表示名</span>
+          <input id="player-name-input" class="modal__input" type="text" maxlength="12" autocomplete="nickname" />
+        </label>
+        <p id="player-name-error" class="modal__error" aria-live="polite"></p>
+        <div class="modal__actions">
+          <button type="button" class="button button--primary" id="player-name-submit">保存する</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>
